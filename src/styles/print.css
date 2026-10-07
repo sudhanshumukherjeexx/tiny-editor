@@ -1,0 +1,82 @@
+/*
+ * Print / "Save as PDF". The app shell is hidden entirely; only #print-root
+ * (filled by export/printDocument.ts with a clean copy of the document) is
+ * printed. Works for A4 and US Letter.
+ */
+#print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 20mm 18mm 22mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    color: #2b2926;
+  }
+
+  body > *:not(#print-root) {
+    display: none !important;
+  }
+
+  #print-root {
+    display: block !important;
+    font-size: 11.5pt;
+    line-height: 1.65;
+  }
+
+  #print-root .kaku-doc-title {
+    font-size: 22pt;
+  }
+
+  #print-root a {
+    color: inherit;
+  }
+
+  #print-root h1,
+  #print-root h2,
+  #print-root h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+  }
+
+  #print-root blockquote,
+  #print-root pre,
+  #print-root li,
+  #print-root .kaku-doc-header {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #print-root mark,
+  #print-root [style*='color'],
+  #print-root code,
+  #print-root pre,
+  #print-root.paper-ruled,
+  #print-root.paper-grid,
+  #print-root.paper-dots {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Optional decorative paper, only when explicitly chosen. */
+  #print-root.paper-ruled {
+    background-image: linear-gradient(to bottom, transparent calc(1.65em - 1px), #ece4d8 calc(1.65em - 1px));
+    background-size: 100% 1.65em;
+  }
+  #print-root.paper-grid {
+    background-image:
+      linear-gradient(#efe8dd 1px, transparent 1px),
+      linear-gradient(90deg, #efe8dd 1px, transparent 1px);
+    background-size: 6mm 6mm;
+  }
+  #print-root.paper-dots {
+    background-image: radial-gradient(circle, #d9d0c3 0.6px, transparent 0.9px);
+    background-size: 6mm 6mm;
+  }
+}

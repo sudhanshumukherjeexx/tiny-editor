@@ -1,0 +1,299 @@
+/* ------------------------------------------------------------------
+   Document typography (on-screen). Print/HTML use export/toHtml.ts.
+   ------------------------------------------------------------------ */
+.doc-body {
+  position: relative;
+}
+
+.kaku-prose {
+  min-height: 46vh;
+  color: var(--text);
+  font-family: var(--doc-font);
+  font-size: var(--doc-size, 18px);
+  line-height: var(--doc-line-height, 1.8);
+  overflow-wrap: break-word;
+  caret-color: var(--text);
+  outline: none;
+  font-variant-ligatures: common-ligatures;
+  transition: padding-bottom 0.3s var(--ease);
+}
+.kaku-prose:focus-visible {
+  outline: none;
+}
+
+.typewriter-mode .kaku-prose {
+  padding-bottom: 45vh;
+}
+
+.kaku-prose > * + * {
+  margin-top: 0;
+}
+.kaku-prose p {
+  margin: 0 0 0.8em;
+}
+
+.kaku-prose h1,
+.kaku-prose h2,
+.kaku-prose h3 {
+  margin: 1.5em 0 0.45em;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.kaku-prose > :first-child {
+  margin-top: 0;
+}
+.kaku-prose h1 {
+  font-size: 1.7em;
+}
+.kaku-prose h2 {
+  font-size: 1.36em;
+}
+.kaku-prose h3 {
+  font-size: 1.12em;
+}
+
+.kaku-prose strong {
+  font-weight: 700;
+}
+
+.kaku-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: text;
+}
+
+.kaku-prose blockquote {
+  margin: 1.1em 0;
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left: 2px solid var(--accent);
+  color: var(--text-muted);
+  font-style: italic;
+}
+.kaku-prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.kaku-prose ul,
+.kaku-prose ol {
+  margin: 0 0 0.8em;
+  padding-left: 1.5em;
+}
+.kaku-prose ul {
+  list-style: disc;
+}
+.kaku-prose ol {
+  list-style: decimal;
+}
+.kaku-prose ul ul {
+  list-style: circle;
+}
+.kaku-prose li {
+  margin: 0.15em 0;
+}
+.kaku-prose li::marker {
+  color: var(--accent);
+}
+.kaku-prose li > p {
+  margin: 0;
+}
+
+/* Checklists */
+.kaku-prose ul[data-type='taskList'] {
+  list-style: none;
+  padding-left: 0.1em;
+}
+.kaku-prose ul[data-type='taskList'] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+}
+.kaku-prose ul[data-type='taskList'] li > label {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: calc(1em * var(--doc-line-height, 1.8));
+  user-select: none;
+}
+.kaku-prose ul[data-type='taskList'] li > div {
+  flex: 1;
+  min-width: 0;
+}
+.kaku-prose ul[data-type='taskList'] input[type='checkbox'] {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid var(--text-faint);
+  border-radius: 4px;
+  background: var(--paper);
+  cursor: pointer;
+  transition:
+    background-color 0.18s,
+    border-color 0.18s,
+    transform 0.15s var(--soft-spring);
+}
+.kaku-prose ul[data-type='taskList'] input[type='checkbox']:active {
+  transform: scale(0.88);
+}
+.kaku-prose ul[data-type='taskList'] input[type='checkbox']:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.kaku-prose ul[data-type='taskList'] input[type='checkbox']:checked::after {
+  content: '';
+  width: 4px;
+  height: 8px;
+  margin-top: -2px;
+  border: solid var(--accent-contrast);
+  border-width: 0 1.75px 1.75px 0;
+  transform: rotate(45deg);
+}
+.kaku-prose ul[data-type='taskList'] li[data-checked='true'] > div {
+  color: var(--text-faint);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--text-faint) 70%, transparent);
+}
+
+/* Code */
+.kaku-prose code {
+  padding: 0.12em 0.36em;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  font-family: var(--code-font);
+  font-size: 0.84em;
+}
+.kaku-prose pre {
+  margin: 1em 0;
+  padding: 0.95em 1.15em;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--text) 4%, var(--paper));
+  font-family: var(--code-font);
+  font-size: 0.84em;
+  line-height: 1.6;
+}
+.kaku-prose pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+/* A tiny flower divider instead of a hard rule. */
+.kaku-prose hr {
+  position: relative;
+  height: 1.5em;
+  margin: 1.6em 0;
+  border: none;
+  text-align: center;
+  cursor: default;
+}
+.kaku-prose hr::after {
+  content: '✿     ✿     ✿';
+  color: var(--accent);
+  font-family: var(--ui-font);
+  font-size: 0.72em;
+  line-height: 2;
+  white-space: pre;
+  opacity: 0.55;
+}
+.kaku-prose hr.ProseMirror-selectednode::after {
+  opacity: 1;
+}
+
+/* Highlights: stored colours are CSS variables that adapt per theme. */
+.kaku-prose mark {
+  padding: 0.04em 0.14em;
+  border-radius: 3px;
+  background: var(--highlight);
+  color: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+[data-scheme='dark'] .kaku-prose mark[data-color] {
+  color: #1f1d26 !important;
+}
+
+/* Placeholder */
+.kaku-prose p.is-editor-empty:first-child::before,
+.kaku-prose .is-empty[data-placeholder]:not([data-placeholder=''])::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.ProseMirror-selectednode {
+  outline: 2px solid var(--selection);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.kaku-dropcursor {
+  background: var(--accent) !important;
+}
+
+/* Caret personalities */
+.caret-typewriter .kaku-prose,
+.caret-typewriter .doc-title {
+  caret-color: var(--accent);
+}
+@supports (caret-shape: block) {
+  .caret-typewriter .kaku-prose {
+    caret-shape: underscore;
+  }
+}
+.caret-glow .kaku-prose {
+  caret-color: var(--accent);
+}
+.caret-glow .kaku-prose > * {
+  transition: box-shadow 0.35s var(--ease);
+}
+.caret-glow .kaku-prose:focus > .is-active-block {
+  box-shadow: -18px 0 0 -16px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* Focus current paragraph: gently soften the rest. */
+.dim-others .kaku-prose > * {
+  transition: opacity 0.35s var(--ease);
+}
+.dim-others .kaku-prose:focus > *:not(.is-active-block) {
+  opacity: 0.36;
+}
+
+/* On ruled paper, keep every line on a rule: spacing snaps to whole lines. */
+.paper-ruled .kaku-prose p,
+.paper-ruled .kaku-prose ul,
+.paper-ruled .kaku-prose ol,
+.paper-ruled .kaku-prose blockquote {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.paper-ruled .kaku-prose li {
+  margin: 0;
+}
+.paper-ruled .kaku-prose h1,
+.paper-ruled .kaku-prose h2,
+.paper-ruled .kaku-prose h3 {
+  margin: var(--line) 0 0;
+  font-size: 1em;
+  line-height: var(--line);
+}
+.paper-ruled .kaku-prose h1 {
+  font-size: 1.3em;
+}
+.paper-ruled .kaku-prose > :first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 639px) {
+  .caret-glow .kaku-prose:focus > .is-active-block {
+    box-shadow: -12px 0 0 -10px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+}
