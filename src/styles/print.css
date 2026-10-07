@@ -17,6 +17,9 @@
     background: #fff !important;
     background-image: none !important;
     color: #2b2926;
+    /* 100dvh resolves to the full sheet in print, which is taller than the
+       area inside the margins, so it would always add a blank last page. */
+    min-height: 0 !important;
   }
 
   body > *:not(#print-root) {

@@ -73,7 +73,7 @@ Downloaded file
 
 ## Tech stack
 
-React 19 · TypeScript · Vite · Tiptap 3 (ProseMirror) · Tailwind CSS 4 · Lucide icons · Fontsource · Vitest
+React 19 · TypeScript · Vite · Tiptap 3 (ProseMirror) · Tailwind CSS 4 · Lucide icons · Fontsource · Vitest · Playwright
 
 ## Getting started
 
@@ -87,7 +87,10 @@ npm install
 npm run dev
 
 # 3. Run the tests
-npm test
+npm test            # unit tests (exporters, word counts, file names, URLs)
+npm run test:e2e    # browser tests: formatting, export, printing, and that
+                    # nothing survives a reload or reaches browser storage
+                    # (first time: npx playwright install chromium)
 
 # 4. Build the static site into dist/
 npm run build
@@ -104,7 +107,7 @@ The build uses relative asset paths (`base: './'`), so it works at any sub-path 
 2. In the repository, open **Settings → Pages** and set **Source** to **GitHub Actions**.
 3. Push to `main`, or run the workflow by hand from the **Actions** tab.
 
-The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs `npm ci`, then `npm test`, then `npm run build`, and publishes `dist/` to Pages. No server is needed after that.
+The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs `npm ci`, the unit tests, `npm run build` and the browser tests, then publishes `dist/` to Pages. No server is needed after that.
 
 > If you'd rather use absolute asset URLs, build with `BASE_PATH=/project-name/ npm run build`.
 
@@ -143,6 +146,7 @@ src/
   hooks/        beforeunload, timer, typewriter sound, exporter, media queries
   utils/        File names, downloads, clipboard, URLs, text stats, dates
   styles/       Global styles and the print stylesheet
+e2e/            Playwright browser tests (desktop + mobile)
 ```
 
 **Adding a theme:** append an entry to `THEMES` in [`src/themes/themes.ts`](src/themes/themes.ts). Every colour is a CSS variable token.
@@ -154,7 +158,7 @@ Issues and pull requests are welcome. Please keep the spirit of the project:
 
 - No persistence, accounts, analytics or network calls involving document content.
 - Keep decorative effects optional, CSS-driven and respectful of `prefers-reduced-motion`.
-- Run `npm test` and `npm run build` before opening a PR.
+- Run `npm test` and `npm run test:e2e` before opening a PR.
 
 ## License
 

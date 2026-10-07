@@ -11,7 +11,17 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     target: 'es2020',
-    chunkSizeWarningLimit: 900,
+    // Vendor code changes rarely, so keep it in its own long-cached chunks.
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 2 },
+            { name: 'editor', test: /node_modules[\\/](@tiptap|prosemirror-|linkifyjs|orderedmap|rope-sequence|w3c-keyname|@floating-ui)/, priority: 1 },
+          ],
+        },
+      },
+    },
   },
   test: {
     environment: 'node',

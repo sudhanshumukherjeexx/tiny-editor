@@ -2398,6 +2398,14 @@ html.theme-fade *::after {
   }
 }
 
+/* Short viewports (200% zoom, landscape phones): let the header and toolbar
+   scroll away so they don't eat half the writing area. */
+@media (max-height: 520px) {
+  .chrome {
+    position: relative;
+  }
+}
+
 /* Reduced motion & reduced effects */
 @media (prefers-reduced-motion: reduce) {
   *,
