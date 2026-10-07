@@ -2,7 +2,9 @@
 
 *write something beautiful.*
 
-![Kaku — a calm, private writing page](docs/screenshot.png)
+**[✿ Visit the site → sudhanshumukherjeexx.github.io/tiny-editor](https://sudhanshumukherjeexx.github.io/tiny-editor/)**
+
+[![Kaku — a calm, private writing page](docs/screenshot.png)](https://sudhanshumukherjeexx.github.io/tiny-editor/)
 
 Kaku (書く, "to write") is a small, private writing room that lives entirely in your browser tab. It sits somewhere between a notepad, a minimal rich-text editor, Japanese stationery and a retro typewriter.
 
