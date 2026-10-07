@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from 'react';
-import { Maximize2, Minimize2, Palette, Settings2 } from 'lucide-react';
+import { ListChecks, Maximize2, Minimize2, NotebookPen, Palette, Settings2 } from 'lucide-react';
 import { useUI } from '../../app/ui';
 import { useSettings } from '../../app/settings';
 import { BRAND } from '../../config/brand';
@@ -8,7 +8,11 @@ import { Popover } from '../ui/Popover';
 import { ThemePicker } from '../ThemePicker/ThemePicker';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
 
+export type SheetMode = 'note' | 'todo';
+
 interface HeaderProps {
+  mode: SheetMode;
+  onModeChange: (mode: SheetMode) => void;
   title: string;
   onTitleChange: (title: string) => void;
   onLogoClick: () => void;
@@ -16,7 +20,12 @@ interface HeaderProps {
   exportMenu: ReactNode;
 }
 
-export function Header({ title, onTitleChange, onLogoClick, mood, exportMenu }: HeaderProps) {
+const MODES = [
+  { value: 'note', label: 'Note', Icon: NotebookPen },
+  { value: 'todo', label: 'To-do', Icon: ListChecks },
+] as const;
+
+export function Header({ mode, onModeChange, title, onTitleChange, onLogoClick, mood, exportMenu }: HeaderProps) {
   const { openPanel, togglePanel, closePanel } = useUI();
   const { settings, toggle } = useSettings();
   const moodRef = useRef<HTMLButtonElement>(null);
@@ -42,7 +51,7 @@ export function Header({ title, onTitleChange, onLogoClick, mood, exportMenu }: 
           className="header-title"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          aria-label="Document title"
+          aria-label={mode === 'note' ? 'Document title' : 'List title'}
           spellCheck={false}
           maxLength={120}
           size={Math.max(8, Math.min(28, title.length + 1))}
@@ -50,6 +59,23 @@ export function Header({ title, onTitleChange, onLogoClick, mood, exportMenu }: 
       </div>
 
       <nav className="header-actions" aria-label="Document">
+        <div className="mode-switch" role="radiogroup" aria-label="Sheet type">
+          {MODES.map(({ value, label, Icon }) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={mode === value}
+              aria-label={label}
+              data-tip={value === 'note' ? 'Write a note' : 'Make a to-do list'}
+              className={`mode-opt ${mode === value ? 'is-selected' : ''}`}
+              onClick={() => onModeChange(value)}
+            >
+              <Icon size={14} strokeWidth={1.85} aria-hidden="true" />
+              <span className="mode-label">{label}</span>
+            </button>
+          ))}
+        </div>
         <button
           ref={moodRef}
           type="button"

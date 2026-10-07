@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import type { Editor } from '@tiptap/react';
 import { KaomojiPicker } from '../KaomojiPicker/KaomojiPicker';
 import { useSettings, type Settings } from '../../app/settings';
 import type { WritingTimer } from '../../hooks/useWritingTimer';
@@ -17,11 +16,14 @@ interface MoodPanelProps {
   goal: number | null;
   onGoalChange: (goal: number | null) => void;
   timer: WritingTimer;
-  editor: Editor;
+  /** Inserts a kaomoji/symbol into whichever sheet is open. */
+  onInsert: (text: string) => void;
+  /** Note-only writing aids (typewriter mode, word goal) are hidden for lists. */
+  isNote: boolean;
 }
 
 /** ✿ Mood — optional atmosphere, paper and writing aids. */
-export function MoodPanel({ goal, onGoalChange, timer, editor }: MoodPanelProps) {
+export function MoodPanel({ goal, onGoalChange, timer, onInsert, isNote }: MoodPanelProps) {
   const { settings, update } = useSettings();
   const [goalDraft, setGoalDraft] = useState(goal ? String(goal) : '');
   const [customMinutes, setCustomMinutes] = useState('');
@@ -80,52 +82,56 @@ export function MoodPanel({ goal, onGoalChange, timer, editor }: MoodPanelProps)
       </PanelSection>
 
       <PanelSection title="Writing">
-        <Toggle
-          label="Typewriter mode"
-          icon="⌨"
-          hint="keeps your line centred"
-          checked={settings.typewriterMode}
-          onChange={(typewriterMode) => update({ typewriterMode })}
-        />
-        <Toggle
-          label="Focus current paragraph"
-          icon="◎"
-          hint="softly dims the rest"
-          checked={settings.focusParagraph}
-          onChange={(focusParagraph) => update({ focusParagraph })}
-        />
+        {isNote && (
+          <>
+            <Toggle
+              label="Typewriter mode"
+              icon="⌨"
+              hint="keeps your line centred"
+              checked={settings.typewriterMode}
+              onChange={(typewriterMode) => update({ typewriterMode })}
+            />
+            <Toggle
+              label="Focus current paragraph"
+              icon="◎"
+              hint="softly dims the rest"
+              checked={settings.focusParagraph}
+              onChange={(focusParagraph) => update({ focusParagraph })}
+            />
 
-        <form className="inline-form" onSubmit={submitGoal}>
-          <label htmlFor="kaku-goal" className="inline-label">
-            <span aria-hidden="true">✎</span> Word goal
-          </label>
-          <input
-            id="kaku-goal"
-            className="field field-sm"
-            type="number"
-            min={1}
-            max={100000}
-            inputMode="numeric"
-            placeholder="500"
-            value={goalDraft}
-            onChange={(e) => setGoalDraft(e.target.value)}
-          />
-          <button type="submit" className="btn btn-sm">
-            Set
-          </button>
-          {goal && (
-            <button
-              type="button"
-              className="btn btn-sm btn-quiet"
-              onClick={() => {
-                setGoalDraft('');
-                onGoalChange(null);
-              }}
-            >
-              Clear
-            </button>
-          )}
-        </form>
+            <form className="inline-form" onSubmit={submitGoal}>
+              <label htmlFor="kaku-goal" className="inline-label">
+                <span aria-hidden="true">✎</span> Word goal
+              </label>
+              <input
+                id="kaku-goal"
+                className="field field-sm"
+                type="number"
+                min={1}
+                max={100000}
+                inputMode="numeric"
+                placeholder="500"
+                value={goalDraft}
+                onChange={(e) => setGoalDraft(e.target.value)}
+              />
+              <button type="submit" className="btn btn-sm">
+                Set
+              </button>
+              {goal && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-quiet"
+                  onClick={() => {
+                    setGoalDraft('');
+                    onGoalChange(null);
+                  }}
+                >
+                  Clear
+                </button>
+              )}
+            </form>
+          </>
+        )}
 
         <div className="inline-form">
           <span className="inline-label">
@@ -172,7 +178,7 @@ export function MoodPanel({ goal, onGoalChange, timer, editor }: MoodPanelProps)
             <span>♡ Kaomoji</span>
             <span>✦ Symbols</span>
           </summary>
-          <KaomojiPicker editor={editor} />
+          <KaomojiPicker onInsert={onInsert} />
         </details>
       </PanelSection>
     </div>

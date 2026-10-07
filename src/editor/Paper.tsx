@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'react';
 import { EditorContent, useEditorState, type Editor } from '@tiptap/react';
 import { COPY } from '../app/copy';
 import type { Settings } from '../app/settings';
@@ -14,41 +14,51 @@ interface PaperProps {
   title: string;
   onTitleChange: (title: string) => void;
   dateLabel: string;
+  /** False while another sheet is shown. */
+  active: boolean;
 }
 
-/** The writing sheet: date, title, and the continuous editor surface. */
-export function Paper({ editor, settings, title, onTitleChange, dateLabel }: PaperProps) {
-  const isEmpty = useEditorState({ editor, selector: ({ editor: e }) => e.isEmpty });
-  const titleRef = useRef<HTMLTextAreaElement>(null);
-
-  // Auto-grow the title field so long titles wrap instead of scrolling.
-  useLayoutEffect(() => {
-    const el = titleRef.current;
-    if (!el) return;
-    el.style.height = '0px';
-    el.style.height = `${el.scrollHeight}px`;
-  }, [title, settings.fontId, settings.textSize, settings.width]);
-
+/** Class names and CSS variables shared by every sheet (note or to-do list). */
+export function paperLook(settings: Settings, extra: string[] = []): { className: string; style: CSSProperties } {
   const style = {
     '--doc-font': getFont(settings.fontId).family,
     '--paper-width': WIDTHS[settings.width],
     '--doc-line-height': LINE_HEIGHTS[settings.lineHeight],
     '--doc-size': TEXT_SIZES[settings.textSize],
   } as CSSProperties;
-
-  const classes = [
-    'paper',
-    `paper-${settings.paper}`,
-    settings.paperTexture ? 'has-grain' : '',
-    `caret-${settings.caret}`,
-    settings.focusParagraph ? 'dim-others' : '',
-    settings.typewriterMode ? 'typewriter-mode' : '',
-  ]
+  const className = ['paper', `paper-${settings.paper}`, settings.paperTexture ? 'has-grain' : '', `caret-${settings.caret}`, ...extra]
     .filter(Boolean)
     .join(' ');
+  return { className, style };
+}
+
+/**
+ * Auto-grows a textarea so long text wraps instead of scrolling. Include
+ * the sheet's visibility in `deps`: a hidden field can't be measured, so it
+ * is skipped and measured again once shown.
+ */
+export function useAutoHeight(ref: RefObject<HTMLTextAreaElement | null>, deps: unknown[]) {
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || el.getClientRects().length === 0) return;
+    el.style.height = '0px';
+    el.style.height = `${el.scrollHeight}px`;
+  }, deps);
+}
+
+/** The writing sheet: date, title, and the continuous editor surface. */
+export function Paper({ editor, settings, title, onTitleChange, dateLabel, active }: PaperProps) {
+  const isEmpty = useEditorState({ editor, selector: ({ editor: e }) => e.isEmpty });
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  useAutoHeight(titleRef, [title, settings.fontId, settings.textSize, settings.width, active]);
+
+  const { className, style } = paperLook(settings, [
+    settings.focusParagraph ? 'dim-others' : '',
+    settings.typewriterMode ? 'typewriter-mode' : '',
+  ]);
 
   return (
-    <article className={classes} style={style}>
+    <article className={className} style={style}>
       <span className="washi" aria-hidden="true" />
       <span className="paper-corner" aria-hidden="true" />
       <header className="paper-head">

@@ -30,6 +30,11 @@ There are no accounts, no cloud and no saved documents. When the tab closes, the
 - Markdown-style typing shortcuts (`# `, `- `, `1. `, `> `, `[ ] `, `---`)
 - Editable title, used as the export filename
 
+**To-do lists**
+- Switch between **Note** and **To-do** in the header. Each keeps its own content, so switching never loses anything, and both stay temporary
+- Cute checkboxes, a progress line, `Enter` for a new task, `Backspace` on an empty task to remove it, `Ctrl/⌘ Enter` to tick, `Alt ↑/↓` to reorder
+- Download the list as a **card**: a PNG drawn in your current theme and font, ready to save or share. Lists also export to Markdown (`- [x]` checklists), text, HTML and PDF
+
 **Atmosphere**
 - 8 themes: Typewriter, Sakura, Matcha, Seoul Morning, Peach Milk, Lavender Study, Tokyo Night and AR Console
 - 9 curated fonts (Special Elite, Inter, Cormorant, Space Grotesk, JetBrains Mono, Noto Sans JP, Noto Sans KR, Nunito Sans and Future Console). Fonts are self-hosted and loaded only when you pick them
@@ -52,6 +57,7 @@ There are no accounts, no cloud and no saved documents. When the tab closes, the
 | Plain text | Formatting stripped, structure kept. |
 | HTML | A standalone page with escaped content and a restrictive Content-Security-Policy. |
 | Copy Markdown / Copy text | Straight to the clipboard. |
+| Card (to-do lists) | A 1080px-wide PNG card in the current theme, drawn with the Canvas API. |
 
 ## Privacy
 
@@ -140,9 +146,10 @@ src/
   editor/       Tiptap setup, extensions, commands, slash menu, paper, editor CSS
   components/   Header, Toolbar, FloatingToolbar, LinkEditor, FontPicker,
                 ThemePicker, MoodPanel, SettingsPanel, KaomojiPicker, ExportMenu,
-                StatusBar, WritingGoal, WritingTimer, CommandPalette, SlashMenu,
+                StatusBar, WritingGoal, WritingTimer, CommandPalette, SlashMenu, TodoSheet,
                 Atmosphere, PrivacyNotice, Toasts, ui/ (Popover, Tooltip, controls)
-  export/       toMarkdown, toPlainText, toHtml, printDocument, format registry
+  export/       toMarkdown, toPlainText, toHtml, toCard, printDocument, format registry
+  todo/         To-do list state and its conversion to a checklist document
   themes/       Theme tokens, theme list, ink & highlighter palettes
   fonts/        Curated font list with lazy loaders
   hooks/        beforeunload, timer, typewriter sound, exporter, media queries

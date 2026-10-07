@@ -1843,7 +1843,8 @@ html.theme-fade *::after {
   opacity: 0;
   visibility: hidden;
 }
-.welcome-hint kbd {
+.welcome-hint kbd,
+.todo-hint kbd {
   min-width: 20px;
   padding: 1px 5px;
   border: 1px solid var(--border);
@@ -1856,6 +1857,265 @@ html.theme-fade *::after {
 }
 .hint-dot {
   margin: 0 4px;
+}
+
+/* ------------------------------------------------------------------
+   Note / To-do switch
+   ------------------------------------------------------------------ */
+.mode-switch {
+  display: inline-flex;
+  gap: 2px;
+  margin-right: 6px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.mode-opt {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font: 500 12.5px/1 var(--ui-font);
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    transform 0.15s var(--soft-spring);
+}
+.mode-opt:hover {
+  color: var(--text);
+}
+.mode-opt:active {
+  transform: scale(0.95);
+}
+.mode-opt.is-selected {
+  background: var(--paper);
+  color: var(--accent);
+  box-shadow:
+    0 0 0 1px var(--paper-border),
+    0 2px 6px -3px var(--shadow);
+}
+
+/* Both sheets stay mounted; only the open one is shown. */
+.sheet-slot {
+  display: contents;
+}
+.sheet-slot.is-hidden {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   To-do sheet
+   ------------------------------------------------------------------ */
+.todo-sheet .paper-head {
+  margin-bottom: 18px;
+}
+.todo-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  color: var(--text-muted);
+  font: 400 12px/1.4 var(--ui-font);
+}
+.todo-meter {
+  width: 96px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+.todo-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.45s var(--ease);
+}
+.todo-count.is-all-done {
+  color: var(--accent);
+}
+.todo-clear {
+  margin-left: auto;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--text-faint);
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.todo-clear:hover {
+  color: var(--accent);
+}
+
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text);
+  font-family: var(--doc-font);
+  font-size: var(--doc-size, 18px);
+}
+.todo-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7em;
+  padding: 0.38em 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--border) 80%, transparent);
+  animation: todo-in 0.28s var(--ease);
+}
+.todo-item.todo-new {
+  border-bottom: none;
+  animation: none;
+}
+@keyframes todo-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.todo-check,
+.todo-plus {
+  position: relative;
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.225em;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+}
+.todo-check {
+  padding: 0;
+  border: 1.5px solid color-mix(in srgb, var(--accent) 75%, var(--text-faint));
+  background: var(--paper);
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    border-color 0.2s var(--ease),
+    transform 0.15s var(--soft-spring);
+}
+/* A larger, invisible hit area for fingers. */
+.todo-check::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+.todo-check:hover {
+  background: var(--accent-soft);
+}
+.todo-check:active {
+  transform: scale(0.86);
+}
+.todo-check svg {
+  width: 72%;
+  height: 72%;
+  fill: none;
+  stroke: var(--accent-contrast);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  transition: stroke-dashoffset 0.28s var(--ease) 0.05s;
+}
+.is-done > .todo-check {
+  border-color: var(--accent);
+  background: var(--accent);
+  animation: pop-check 0.4s var(--soft-spring);
+}
+.is-done > .todo-check svg {
+  stroke-dashoffset: 0;
+}
+.todo-plus {
+  border: 1.5px dashed var(--text-faint);
+  color: var(--text-faint);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.todo-new:focus-within .todo-plus {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.todo-text {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1.6;
+  resize: none;
+  caret-color: var(--accent);
+  transition: color 0.25s var(--ease);
+}
+.todo-text::placeholder {
+  color: var(--text-faint);
+}
+.is-done > .todo-text {
+  color: var(--text-faint);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--text-faint) 70%, transparent);
+}
+
+.todo-remove {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 0.12em;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-faint);
+  opacity: 0;
+  cursor: pointer;
+  transition:
+    opacity 0.18s,
+    color 0.18s,
+    background-color 0.18s;
+}
+.todo-item:hover .todo-remove,
+.todo-item:focus-within .todo-remove {
+  opacity: 1;
+}
+.todo-remove:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+@media (hover: none) {
+  .todo-remove {
+    opacity: 0.55;
+  }
+}
+
+.todo-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 28px 0 0;
+  color: var(--text-faint);
+  font: 400 11.5px/1.6 var(--ui-font);
 }
 
 /* Focus mode exit */
@@ -2281,8 +2541,14 @@ html.theme-fade *::after {
   .wide-only {
     display: none !important;
   }
-  .hdr-btn .hdr-label {
+  .hdr-btn .hdr-label,
+  .mode-label {
     display: none;
+  }
+  .mode-opt {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
   }
   .hdr-btn {
     width: 36px;
@@ -2312,12 +2578,20 @@ html.theme-fade *::after {
   }
   .logo-kana,
   .header-slash,
-  .header-title {
+  .header-title,
+  .todo-hint {
     display: none;
   }
   .hdr-btn {
     width: 40px;
     height: 40px;
+  }
+  .mode-switch {
+    margin-right: 2px;
+  }
+  .mode-opt {
+    width: 36px;
+    height: 34px;
   }
   .export-btn {
     min-width: 0;
@@ -2395,6 +2669,35 @@ html.theme-fade *::after {
 
   .w-link {
     width: calc(100vw - 16px);
+  }
+}
+
+/* Narrow phones (iPhone SE, 360px Androids): the ✿ mark alone is the logo. */
+@media (max-width: 420px) {
+  .logo-word {
+    display: none;
+  }
+  .header-left {
+    flex-shrink: 0;
+  }
+  /* Icon-only, but the label stays as the button's accessible name. */
+  .export-btn {
+    width: 40px;
+    padding: 0;
+  }
+  .export-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .hdr-btn {
+    width: 36px;
+  }
+  .mode-opt {
+    width: 34px;
   }
 }
 

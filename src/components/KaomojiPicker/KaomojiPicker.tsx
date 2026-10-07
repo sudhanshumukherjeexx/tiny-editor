@@ -1,18 +1,16 @@
 import { useState } from 'react';
-import type { Editor } from '@tiptap/react';
-import { insertText } from '../../editor/editorCommands';
 import { KAOMOJI, SYMBOLS } from './stamps';
 
 type Tab = 'kaomoji' | 'symbols';
 
 /** A small stationery drawer of kaomoji and symbols; inserts plain text. */
-export function KaomojiPicker({ editor, initialTab = 'kaomoji' }: { editor: Editor; initialTab?: Tab }) {
+export function KaomojiPicker({ onInsert, initialTab = 'kaomoji' }: { onInsert: (text: string) => void; initialTab?: Tab }) {
   const [tab, setTab] = useState<Tab>(initialTab);
   const [category, setCategory] = useState('Happy');
   const [flash, setFlash] = useState<string | null>(null);
 
   const insert = (text: string) => {
-    insertText(editor, text);
+    onInsert(text);
     setFlash(text);
     window.setTimeout(() => setFlash((f) => (f === text ? null : f)), 700);
   };

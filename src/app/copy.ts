@@ -16,4 +16,8 @@ export const COPY = {
   copiedMarkdown: 'Markdown copied ✓',
   copiedText: 'Text copied ✓',
   easterEgg: 'write something weird ✿',
+  todoTitle: 'To-do list',
+  todoPlaceholderJa: '何をする？',
+  todoPlaceholder: 'add your first task…',
+  todoAddMore: 'add a task…',
 } as const;

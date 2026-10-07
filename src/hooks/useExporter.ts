@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import type { Editor } from '@tiptap/react';
 import { useUI } from '../app/ui';
 import { COPY } from '../app/copy';
 import { BRAND } from '../config/brand';
@@ -12,8 +11,16 @@ import { copyText } from '../utils/clipboard';
 import { downloadFile } from '../utils/download';
 import { fileNameWithExtension } from '../utils/fileName';
 
+/** Whatever is being exported: the note, or the to-do list. */
+export interface ExportSource {
+  getDoc: () => DocNode;
+  isEmpty: () => boolean;
+  /** Renders a PNG card, for sources that support one. */
+  renderCard?: () => Promise<Blob>;
+}
+
 interface ExporterOptions {
-  editor: Editor;
+  source: ExportSource;
   title: string;
   fontFamily: string;
   dateLabel: string;
@@ -22,29 +29,31 @@ interface ExporterOptions {
 
 export interface Exporter {
   download: (id: FileFormat['id']) => boolean;
+  /** Undefined when the current document can't be drawn as a card. */
+  downloadCard?: () => Promise<boolean>;
   print: () => boolean;
   copyMarkdown: () => Promise<boolean>;
   copyPlainText: () => Promise<boolean>;
 }
 
 /** All export actions, isolated from UI. Returns true on success. */
-export function useExporter({ editor, title, fontFamily, dateLabel, printOptions }: ExporterOptions): Exporter {
+export function useExporter({ source, title, fontFamily, dateLabel, printOptions }: ExporterOptions): Exporter {
   const { notify } = useUI();
-  const latest = useRef({ title, fontFamily, dateLabel, printOptions });
-  latest.current = { title, fontFamily, dateLabel, printOptions };
+  const latest = useRef({ source, title, fontFamily, dateLabel, printOptions });
+  latest.current = { source, title, fontFamily, dateLabel, printOptions };
 
   const context = useCallback((): ExportContext => {
-    const { title: t, fontFamily: f, dateLabel: d } = latest.current;
-    return { title: t, doc: editor.getJSON() as DocNode, fontFamily: f, dateLabel: d };
-  }, [editor]);
+    const { source: s, title: t, fontFamily: f, dateLabel: d } = latest.current;
+    return { title: t, doc: s.getDoc(), fontFamily: f, dateLabel: d };
+  }, []);
 
   const ensureContent = useCallback(() => {
-    if (editor.isEmpty || !editor.getText().trim()) {
+    if (latest.current.source.isEmpty()) {
       notify(COPY.emptyExport);
       return false;
     }
     return true;
-  }, [editor, notify]);
+  }, [notify]);
 
   // Route the browser's own Ctrl/Cmd+P through the same clean print view.
   useEffect(() => {
@@ -73,6 +82,18 @@ export function useExporter({ editor, title, fontFamily, dateLabel, printOptions
     },
     [context, ensureContent, notify],
   );
+
+  const downloadCard = useCallback(async () => {
+    const render = latest.current.source.renderCard;
+    if (!render || !ensureContent()) return false;
+    try {
+      downloadFile(await render(), fileNameWithExtension(latest.current.title, 'png'));
+      return true;
+    } catch {
+      notify(COPY.exportFailed, 'error');
+      return false;
+    }
+  }, [ensureContent, notify]);
 
   const print = useCallback(() => {
     if (!ensureContent()) return false;
@@ -108,5 +129,5 @@ export function useExporter({ editor, title, fontFamily, dateLabel, printOptions
   const copyMarkdown = useCallback(() => copy((c) => toMarkdown(c.doc), COPY.copiedMarkdown), [copy]);
   const copyPlainText = useCallback(() => copy((c) => toPlainText(c.doc), COPY.copiedText), [copy]);
 
-  return { download, print, copyMarkdown, copyPlainText };
+  return { download, downloadCard: source.renderCard ? downloadCard : undefined, print, copyMarkdown, copyPlainText };
 }

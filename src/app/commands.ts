@@ -14,10 +14,17 @@ interface CommandDeps {
   toggle: (key: 'focusMode' | 'typewriterMode' | 'focusParagraph' | 'sound') => void;
   openPanel: (id: PanelId | null) => void;
   startTimer: (minutes: number) => void;
+  mode: 'note' | 'todo';
+  setMode: (mode: 'note' | 'todo') => void;
 }
 
-export function buildCommands({ editor, exporter, update, toggle, openPanel, startTimer }: CommandDeps): Command[] {
+export function buildCommands({ editor, exporter, update, toggle, openPanel, startTimer, mode, setMode }: CommandDeps): Command[] {
+  const downloadCard = exporter.downloadCard;
   return [
+    mode === 'note'
+      ? { id: 'mode-todo', group: 'View', label: 'Switch to to-do list', run: () => setMode('todo') }
+      : { id: 'mode-note', group: 'View', label: 'Switch to note', run: () => setMode('note') },
+    ...(downloadCard ? [{ id: 'card', group: 'Export', label: 'Download card (.png)', run: () => void downloadCard() }] : []),
     { id: 'focus', group: 'View', label: 'Toggle focus mode', hint: shortcut('mod+shift+f'), run: () => toggle('focusMode') },
     { id: 'typewriter', group: 'Writing', label: 'Toggle typewriter mode', run: () => toggle('typewriterMode') },
     { id: 'focus-para', group: 'Writing', label: 'Toggle focus current paragraph', run: () => toggle('focusParagraph') },

@@ -12,24 +12,32 @@ interface StatusBarProps {
   goal: ReactNode;
   timer: ReactNode;
   flower: boolean;
+  /** Shown instead of word statistics (e.g. task counts for a to-do list). */
+  summary?: string;
 }
 
-export function StatusBar({ stats, showNudge, onNudgeExport, onNudgeDismiss, goal, timer, flower }: StatusBarProps) {
+export function StatusBar({ stats, showNudge, onNudgeExport, onNudgeDismiss, goal, timer, flower, summary }: StatusBarProps) {
   const words = `${formatNumber(stats.words)} ${stats.words === 1 ? 'word' : 'words'}`;
   return (
     <footer className="status-bar">
       <div className="status-left">
-        <span className="stat" aria-live="off">
-          {words}
-        </span>
-        <span className="stat-sep hide-sm" aria-hidden="true">
-          ·
-        </span>
-        <span className="stat hide-sm">{formatNumber(stats.characters)} characters</span>
-        <span className="stat-sep hide-md" aria-hidden="true">
-          ·
-        </span>
-        <span className="stat hide-md">{stats.readingMinutes} min read</span>
+        {summary ? (
+          <span className="stat">{summary}</span>
+        ) : (
+          <>
+            <span className="stat" aria-live="off">
+              {words}
+            </span>
+            <span className="stat-sep hide-sm" aria-hidden="true">
+              ·
+            </span>
+            <span className="stat hide-sm">{formatNumber(stats.characters)} characters</span>
+            <span className="stat-sep hide-md" aria-hidden="true">
+              ·
+            </span>
+            <span className="stat hide-md">{stats.readingMinutes} min read</span>
+          </>
+        )}
 
         {showNudge && (
           <span className="nudge" role="status">

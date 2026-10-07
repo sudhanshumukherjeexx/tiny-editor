@@ -27,7 +27,7 @@ import {
 import { useUI } from '../../app/ui';
 import { useSettings } from '../../app/settings';
 import { getFont } from '../../fonts/fonts';
-import { setBlockType, type BlockType } from '../../editor/editorCommands';
+import { insertText, setBlockType, type BlockType } from '../../editor/editorCommands';
 import { shortcut } from '../../utils/platform';
 import { IconButton } from '../ui/IconButton';
 import { Popover } from '../ui/Popover';
@@ -227,7 +227,7 @@ export function Toolbar({ editor, onLink }: ToolbarProps) {
       </Popover>
 
       <Popover open={openPanel === 'stamps'} onClose={closePanel} anchor={stampsRef} label="Kaomoji and symbols" align="center" className="w-stamps">
-        <KaomojiPicker editor={editor} />
+        <KaomojiPicker onInsert={(text) => insertText(editor, text)} />
       </Popover>
 
       <Popover open={openPanel === 'more'} onClose={closePanel} anchor={moreRef} label="More formatting" align="end" className="w-more">
@@ -290,7 +290,7 @@ export function Toolbar({ editor, onLink }: ToolbarProps) {
             <p className="panel-label">Font</p>
             <FontList />
             <p className="panel-label">Kaomoji</p>
-            <KaomojiPicker editor={editor} />
+            <KaomojiPicker onInsert={(text) => insertText(editor, text)} />
           </div>
 
           <div className="menu-divider" />

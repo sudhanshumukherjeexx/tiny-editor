@@ -1,6 +1,6 @@
 /** Triggers a client-side download. Nothing leaves the browser. */
-export function downloadFile(content: string, fileName: string, mimeType: string): void {
-  const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
+export function downloadFile(content: string | Blob, fileName: string, mimeType?: string): void {
+  const blob = typeof content === 'string' ? new Blob([content], { type: `${mimeType ?? 'text/plain'};charset=utf-8` }) : content;
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

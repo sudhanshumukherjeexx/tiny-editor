@@ -37,6 +37,7 @@ export function ExportMenu({ exporter, printOptions, onPrintOptionsChange }: Exp
     if (ok) setDone(true);
     closePanel();
   };
+  const exportCard = exporter.downloadCard;
 
   return (
     <>
@@ -62,6 +63,19 @@ export function ExportMenu({ exporter, printOptions, onPrintOptionsChange }: Exp
       <Popover open={open} onClose={closePanel} anchor={buttonRef} label="Export" align="end" className="w-export" role="menu">
         <div className="panel-body">
           <p className="panel-label">Export</p>
+
+          {exportCard && (
+            <button type="button" role="menuitem" className="export-item export-card" onClick={async () => run(await exportCard())}>
+              <span className="export-glyph" aria-hidden="true">
+                ✿
+              </span>
+              <span className="export-text">
+                <span className="export-name">Card</span>
+                <span className="export-desc">a cute picture to save or share</span>
+              </span>
+              <span className="export-ext">.png</span>
+            </button>
+          )}
 
           <div className="export-item-wrap">
             <button type="button" role="menuitem" className="export-item" onClick={() => run(exporter.print())}>
