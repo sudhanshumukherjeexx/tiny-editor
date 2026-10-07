@@ -162,4 +162,4 @@ Issues and pull requests are welcome. Please keep the spirit of the project:
 
 ## License
 
-License to be decided. See [`LICENSE`](LICENSE). Bundled fonts use the SIL Open Font License, and Lucide icons use ISC.
+[MIT](LICENSE) © 2026 Sudhanshu Mukherjee. Bundled fonts are distributed under the SIL Open Font License 1.1 via [Fontsource](https://fontsource.org), and Lucide icons use the ISC License.
